@@ -1,28 +1,36 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <nav class="container section">
+      <mba-search-view></mba-search-view>
+    </nav>
+    <section class="container">
+      <div class="tile is-ancestor">
+        <div class="tile is-3 is-parent">
+          <div class="tile is-child">
+            <mba-profile></mba-profile>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="tile is-child box">
+            <mba-main-view></mba-main-view>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MbaMainView from './components/MainView.vue'
+import MbaProfile from './components/Profile.vue'
+import MbaSearchView from './components/SearchView.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    MbaMainView,
+    MbaProfile,
+    MbaSearchView,
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
