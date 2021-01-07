@@ -128,9 +128,15 @@
 </template>
 
 <script>
+import { countries } from '../assets/countries.js'
+import { organisation } from '../assets/organisations.js'
+import { socialMedia } from '../assets/socialMedia.js'
+import { user } from '../assets/user.js'
+
 export default {
   data() {
     return {
+      user,
       form: {
         firstname: '',
         lastname: '',
@@ -151,49 +157,9 @@ export default {
         dropFile: null,
       },
       formData: {
-        socialMedia: [
-          {
-            id: 1,
-            name: 'Facebook',
-            icon: 'fab fa-facebook',
-            color: '#3b5998',
-          },
-          {
-            id: 2,
-            name: 'Twitter',
-            icon: 'fab fa-twitter',
-            color: '#00acee',
-          },
-          {
-            id: 3,
-            name: 'Linkedin',
-            icon: 'fab fa-linkedin',
-            color: '#0072b1',
-          },
-          {
-            id: 4,
-            name: 'Orcid',
-            icon: 'fab fa-orcid',
-            color: '#bdeb34',
-          },
-          {
-            id: 5,
-            name: 'SoundClound',
-            icon: 'fab fa-soundcloud',
-            color: '#ff7700',
-          },
-        ],
-        organisations: [
-          'Marine Nationale',
-          'National Aeronautics and Space Administration',
-          'TurboSound UK',
-        ],
-        countries: [
-          'France',
-          'Belgique',
-          'Bordurie',
-          'Syldavie',
-        ]
+        countries,
+        organisation,
+        socialMedia,
       },
     }
   },

@@ -16,9 +16,9 @@
       <div class="block">
         <p class="is-size-6 has-text-weight-semibold">My social ids</p>
         <ul>
-          <li class="is-size-6 has-text-weight-normal" v-for="media in user.socialMedia" :key="media.id">
+          <li class="is-size-6 has-text-weight-normal" v-for="media in user.socialIds" :key="media.id">
             <a :href="media.link">
-              <i :class="media.class"></i> {{ media.name }}
+              <i :class="media.icon" :style="{ color: media.color }"></i> {{ media.name }}
             </a>
           </li>
         </ul>
@@ -28,34 +28,12 @@
 </template>
 
 <script>
+import { user } from '../assets/user.js'
+
 export default {
   data() {
     return {
-      user: {
-        firstname: 'Tryphon',
-        lastname: 'Tournesol',
-        about: 'Le professeur Tryphon Tournesol est un multispécialiste capable de concevoir le moteur atomique de la fusée lunaire, un sous-marin, une pilule anti-alcool, un puissant émetteur d\'ultrasons...',
-        socialMedia: [
-          {
-            id: 1,
-            name: 'Facebook',
-            class: 'fab fa-facebook',
-            link: 'https://fr-fr.facebook.com/people/Triphon-Tournesol/100016965376092'
-          },
-          {
-            id: 2,
-            name: 'Linkedin',
-            class: 'fab fa-linkedin',
-            link: 'https://fr.linkedin.com/in/tryphon-tournesol-33755016'
-          },
-          {
-            id: 3,
-            name: 'Orcid',
-            class: 'fab fa-orcid',
-            link: 'https://orcid.org/0000-0002-7889-1988'
-          },
-        ],
-      }
+      user,
     }
   }
 }

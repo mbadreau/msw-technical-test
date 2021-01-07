@@ -35,6 +35,9 @@
 </template>
 
 <script>
+import { publications } from '../assets/publications.js'
+import { user } from '../assets/user.js'
+
 export default {
   created: function() {
     this.name = this.searchPub;
@@ -48,48 +51,31 @@ export default {
   },
   data() {
     return {
-      publications: [
-        {
-          id: 1,
-          title: 'Le Secret de La Licorne',
-          authors: [ 'Tryphon Tournesol' ],
-          year: 1943,
-          language: 'fr-BE',
-        },
-        {
-          id: 2,
-          title: 'Les Sept Boules de cristal',
-          authors: [ 'Hippolyte Bergamotte', 'Tryphon Tournesol' ],
-          year: 1949,
-          language: 'fr-BE',
-        },
-        {
-          id: 3,
-          title: 'On a marché sur la Lune',
-          authors: [ 'Tryphon Tournesol', 'Frank Wolff' ],
-          year: 1954,
-          language: 'fr-BE',
-        },
-        {
-          id: 4,
-          title: 'Affaire Tournesol',
-          authors: [ 'Tryphon Tournesol' ],
-          year: 1956,
-          language: 'fr-BE',
-        },
-      ],
+      publications,
+      user,
       name: '',
       selected: '',
     }
   },
   methods: {
     filterPublication: function(name, publication) {
+      // TODO hope I'll improve this with elastic
       name = name.toLowerCase();
-      return (
-        publication.title.toString().toLowerCase().indexOf(name) >= 0
-          || publication.authors.toString().toLowerCase().indexOf(name) >= 0
-          || publication.year.toString().toLowerCase().indexOf(name) >= 0
-          || publication.language.toString().toLowerCase().indexOf(name) >= 0
+      const username = (user.firstname + ' ' + user.lastname).toLowerCase();
+      const username_rev = (user.lastname + ' ' + user.firstname).toLowerCase();
+      var isUserPublication = false;
+      // we test both case where firstname is before or after last name
+      publication.authors.forEach(function(author) {
+        author = author.toLowerCase();
+        if (author === username || author === username_rev)
+          isUserPublication = true;
+      });
+      return (isUserPublication
+            && (publication.title.toString().toLowerCase().indexOf(name) >= 0
+              || publication.authors.toString().toLowerCase().indexOf(name) >= 0
+              || publication.year.toString().toLowerCase().indexOf(name) >= 0
+              || publication.language.toString().toLowerCase().indexOf(name) >= 0
+            )
       );
     }
   },
