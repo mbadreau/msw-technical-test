@@ -1,35 +1,51 @@
 <template>
   <div>
+
     <div class="mx-6 px-6 mb-6">
       <b-field class="block">
-      <!-- Autocomplete example from Buefy -->
-      <b-autocomplete
-        ref="mbaAutocomplete"
-        expanded
-        keep-first
-        open-on-focus
-        clearable
-        v-model="name"
-        placeholder="Rechercher dans les publications"
-        :data="filteredDataObj"
-        field="title">
-        <template slot="empty">Aucune publication trouvée</template>
-      </b-autocomplete>
-      <p class="control">
-        <b-button class="button is-primary" @click="selected = name">Go</b-button>
-      </p>
-    </b-field>
+        <!-- Autocomplete example from Buefy -->
+        <b-autocomplete
+          ref="mbaAutocomplete"
+          expanded
+          keep-first
+          open-on-focus
+          clearable
+          v-model="name"
+          placeholder="Rechercher dans les publications"
+          :data="filteredDataObj"
+          field="title">
+          <template slot="empty">
+            Aucune publication trouvée
+          </template>
+        </b-autocomplete>
+
+        <p class="control">
+          <b-button class="button is-primary" @click="selected = name">Go</b-button>
+        </p>
+      </b-field>
     </div>
+
     <ul>
       <li class="block" v-for="publication in filteredSelectedDataObj" :key="publication.id">
         <p>{{ publication.authors | formatList }}. {{ publication.year }}. {{ publication.title }}.</p>
       </li>
     </ul>
+
   </div>
 </template>
 
 <script>
 export default {
+  created: function() {
+    this.name = this.searchPub;
+    this.selected = this.searchPub;
+  },
+  props: {
+    searchPub: {
+      type: String,
+      default: '',
+    }
+  },
   data() {
     return {
       publications: [
@@ -87,15 +103,6 @@ export default {
       }
       return list;
     },
-    filterList: function(value) {
-      // var list = '';
-      // if (value) {
-      //   for (var i = 0; i < value.length; i++) {
-      //     list += value[i] + (i < value.length -1 ? ', ' : '');
-      //   }
-      // }
-      return value;
-    },
   },
   computed: {
     filteredDataObj() {
@@ -106,6 +113,12 @@ export default {
       return this.publications.filter(option => 
         this.filterPublication(this.selected, option))
     },
-  }
+  },
+  watch: {
+    selected: function(value) {
+      // push new route on selected change, and catch redundant navigation exception
+      this.$router.push({ name: 'viewMyPublications', params: { searchPub: value } }).catch(()=>{})
+    }
+  },
 }
 </script>
