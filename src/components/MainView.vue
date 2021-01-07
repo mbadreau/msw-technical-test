@@ -1,28 +1,45 @@
 <template>
-  <div>
-    <div class="buttons has-addons is-centered">
-      <b-button tag="router-link" to="/" exact active-class="is-primary">
-        Vue générale
-      </b-button>
+  <div class="tile is-ancestor">
+    <div class="tile is-3 is-parent">
+      <div class="tile is-child">
 
-      <b-button tag="router-link" to="/profile" active-class="is-primary">
-        Mon profil
-      </b-button>
+        <mba-profile></mba-profile>
 
-      <b-button tag="router-link" to="/publications" active-class="is-primary">
-        Mes Publications
-      </b-button>
+      </div>
     </div>
 
-    <div class="section">
-      <router-view></router-view>
-    </div>
+    <div class="tile is-parent">
+      <div class="tile is-child box">
 
+        <div class="buttons has-addons is-centered">
+          <b-button tag="router-link" :to="{ name: 'viewMyResume' }" exact active-class="is-primary">
+            Vue générale
+          </b-button>
+
+          <b-button tag="router-link" :to="{ name: 'viewMyProfile' }" active-class="is-primary">
+            Mon profil
+          </b-button>
+
+          <b-button tag="router-link" :to="{ name: 'viewMyPublications' }" active-class="is-primary">
+            Mes Publications
+          </b-button>
+        </div>
+
+        <div class="section">
+          <router-view></router-view>
+        </div>
+        
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import MbaProfile from './Profile.vue'
+
 export default {
-  
+  components: {
+    MbaProfile,
+  },
 }
 </script>
