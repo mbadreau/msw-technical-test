@@ -12,7 +12,7 @@
           clearable
           v-model="name"
           placeholder="Rechercher dans les publications"
-          :data="filteredDataObj"
+          :data="filteredData"
           field="title">
           <template slot="empty">
             Aucune publication trouvée
@@ -26,7 +26,7 @@
     </div>
 
     <ul>
-      <li class="block" v-for="publication in filteredSelectedDataObj" :key="publication.id">
+      <li class="block" v-for="publication in filteredSelectedData" :key="publication.id">
         <p>{{ publication.authors | formatList }}. {{ publication.year }}. {{ publication.title }}.</p>
       </li>
     </ul>
@@ -40,11 +40,22 @@ import { user } from '../assets/user.js'
 
 export default {
   created: function() {
-    this.name = this.searchPub;
-    this.selected = this.searchPub;
+    // update selected and name if there is a query parameter
+    this.name = this.search;
+    this.selected = this.search;
+    // auto update url query parameter on selected change
+    this.$watch('selected', (value) => {
+      // Use an empty catch to solve Avoided redundant navigation to current location error
+      this.$router.push({ name: 'viewMyPublications', query: { search: value } }).catch(()=>{});
+    });
+    // auto update selected on url query parameter change
+    this.$watch('$route.query.search', (newValue) => {
+      this.name = newValue;
+      this.selected = newValue;
+    });
   },
   props: {
-    searchPub: {
+    search: {
       type: String,
       default: '',
     }
@@ -91,20 +102,14 @@ export default {
     },
   },
   computed: {
-    filteredDataObj() {
+    filteredData() {
       return this.publications.filter(option => 
         this.filterPublication(this.name, option))
     },
-    filteredSelectedDataObj() {
+    filteredSelectedData() {
       return this.publications.filter(option => 
         this.filterPublication(this.selected, option))
     },
-  },
-  watch: {
-    selected: function(value) {
-      // push new route on selected change, and catch redundant navigation exception
-      this.$router.push({ name: 'viewMyPublications', params: { searchPub: value } }).catch(()=>{})
-    }
   },
 }
 </script>

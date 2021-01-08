@@ -1,8 +1,8 @@
-import MbaMainView from './components/MainView.vue'
-import MbaMyResume from './components/MyResume.vue'
-import MbaMyProfile from './components/MyProfile.vue'
-import MbaMyPublications from './components/MyPublications.vue'
-import MbaPageNotFound from './components/PageNotFound.vue'
+import MbaMainView from '../components/MainView.vue'
+import MbaMyResume from '../components/MyResume.vue'
+import MbaMyProfile from '../components/MyProfile.vue'
+import MbaMyPublications from '../components/MyPublications.vue'
+import MbaPageNotFound from '../components/PageNotFound.vue'
 
 export const routes = [
   // homepage
@@ -24,6 +24,14 @@ export const routes = [
     path: '/publications',
     redirect: { name: 'viewRoot' },
   },
+  // when having only an integer, considering it is a userId
+  {
+    path: '/:userId(\\d+)',
+    redirect: to => ({
+      name: "viewMyResume",
+      params: { userId: to.params.userId },
+    }),
+  },
   // when a user is specified in the url, display its profile if exists
   {
     path: '/user/:userId(\\d+)',
@@ -42,12 +50,13 @@ export const routes = [
         name: 'viewMyProfile',
         component: MbaMyProfile,
       },
-      // searchPub allow to save a link given a specific (list of) publication(s)
+      // publications subpage
       {
-        path: 'publications/:searchPub?',
+        path: 'publications',
         name: 'viewMyPublications',
         component: MbaMyPublications,
-        props: true,
+        // using props to get back search query value
+        props: route => ({ search: route.query.search }),
       },
     ]
   },
