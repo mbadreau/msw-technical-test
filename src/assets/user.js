@@ -1,5 +1,7 @@
 export const user = {
+  id: 1,
   avatar: '',
+  position: 'Professeur',
   firstname: 'Tryphon',
   lastname: 'Tournesol',
   about: 'Le professeur Tryphon Tournesol est un multispécialiste capable de concevoir le moteur atomique de la fusée lunaire, un sous-marin, une pilule anti-alcool, un puissant émetteur d\'ultrasons...',

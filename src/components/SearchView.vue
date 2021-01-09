@@ -11,8 +11,9 @@
         clearable
         v-model="name"
         placeholder="Autocomplétion pour retrouver un utilisateur dans le système"
-        :data="filteredDataArray"
-        @select="option => selected = option">
+        :data="filteredData"
+        field="name"
+        @select="option => selected = (option||{}).id">
         <template slot="empty">
           Aucun utilisateur trouvé
         </template>
@@ -21,7 +22,7 @@
       <p class="control">
         <b-button
         class="button is-primary"
-        @click="toggleDropdown()">
+        @click="toggleDropdown">
           <i class="fas fa-caret-down"></i>
         </b-button>
       </p>
@@ -31,7 +32,7 @@
       <b-button
         class="button is-primary"
         :disabled="!selected"
-        @click="loadProfile(name)">
+        @click="loadSelected">
         Rechercher
       </b-button>
     </div>
@@ -41,21 +42,25 @@
 
 <script>
 import { users } from '../assets/users.js'
-import { user } from '../assets/user.js'
 
 export default {
+  props: {
+    userId: {
+      type: Number,
+      default: 0,
+    }
+  },
   data() {
     return {
       users,
-      user,
       name: '',
-      selected: null
+      selected: 0,
     }
   },
   methods: {
     resetSelected: function() {
       this.name = '';
-      this.selected = null;
+      this.selected = 0;
     },
     toggleDropdown: function() {
       // if autocomplete dropdown is not opened yet, 
@@ -67,25 +72,35 @@ export default {
         this.$refs.mbaAutocomplete.focus();
       }
     },
-    loadProfile: function(username) {
-      alert('Impossible d\'afficher le profil de ' + username);
+    loadSelected: function() {
+      console.log(this.userId + ' - ' + this.selected)
+      // userId 0 is the default value (no user)
+      if (this.selected > 0 && this.selected != this.userId) {
+        this.$router.push({ name: 'viewMyResume', params: { userId: this.selected } });
+      }
       this.resetSelected();
     },
   },
   computed: {
-    filteredDataArray() {
+    filteredData() {
+      // first filter users with given input string parts
       return this.users.filter((option) => {
-        return option
-          .toString()
-          .toLowerCase()
-          .indexOf(this.name.toLowerCase()) >= 0
+        var isMatching = true;
+        this.name.toLowerCase().split(' ').forEach(function(part) {
+          isMatching &= (option.position.toString().toLowerCase().indexOf(part) >= 0
+            || option.firstname.toString().toLowerCase().indexOf(part) >= 0
+            || option.lastname.toString().toLowerCase().indexOf(part) >= 0);
+        })
+        return isMatching;
       })
-    }
-  },
-  watch: {
-    selected: function(value) {
-      // push new route on selected change, and catch redundant navigation exception
-      this.$router.push({ name: 'viewMyPublications', params: { searchPub: value } }).catch(()=>{})
+      // then map object array to another object array with concat strings
+      .map((user) => {
+        return {
+          id: user.id,
+          name: ((user.position ? user.position + ' ' : '') 
+            + user.firstname + ' ' + user.lastname)
+        }
+      });
     }
   },
 }

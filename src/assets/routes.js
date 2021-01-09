@@ -46,6 +46,19 @@ export const routes = [
       default: MbaMainView,
       search: MbaSearchView,
     },
+    props: {
+      // for routes with named views, you have to define the `props` option for each named view:
+      default: false,
+      search: (route) => {      
+        // userId 0 is the default value (no user)
+        // TODO : redirect urls with userId 0
+        const userId = Number.parseInt(route.params.userId, 10);
+        if (Number.isNaN(userId)) {
+          return 0;
+        }
+        return { userId };
+      }
+    },
     children: [
       // default subpage
       {
