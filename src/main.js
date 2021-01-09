@@ -14,6 +14,8 @@ Vue.use(Buefy, {
 
 Vue.config.productionTip = false
 
+export const eventBus = new Vue();
+
 const router = new VueRouter({
   routes: routes,
   mode: 'history',

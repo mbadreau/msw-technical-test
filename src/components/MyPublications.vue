@@ -36,7 +36,7 @@
 
 <script>
 import { publications } from '../assets/publications.js'
-import { user } from '../assets/user.js'
+import { eventBus } from '../main.js'
 
 export default {
   created: function() {
@@ -46,24 +46,34 @@ export default {
     // auto update url query parameter on selected change
     this.$watch('selected', (value) => {
       // Use an empty catch to solve Avoided redundant navigation to current location error
-      this.$router.push({ name: 'viewMyPublications', query: { search: value } }).catch(()=>{});
+      this.$router.push({ query: { search: value } }).catch(()=>{});
     });
     // auto update selected on url query parameter change
     this.$watch('$route.query.search', (newValue) => {
       this.name = newValue;
       this.selected = newValue;
     });
+    // get username update from eventBus
+    eventBus.$on('userChange', (user) => {
+      if (((user||{}).firstname||'').length > 0 
+        && ((user||{}).lastname||'').length > 0) {
+        this.username = user.firstname + ' ' + user.lastname;
+      }
+      else {
+        this.username = '';
+      }
+    });
   },
   props: {
     search: {
       type: String,
       default: '',
-    }
+    },
   },
   data() {
     return {
       publications,
-      user,
+      username: '',
       name: '',
       selected: '',
     }
@@ -72,13 +82,12 @@ export default {
     filterPublication: function(name, publication) {
       // TODO hope I'll improve this with elastic
       name = name.toLowerCase();
-      const username = (user.firstname + ' ' + user.lastname).toLowerCase();
-      const username_rev = (user.lastname + ' ' + user.firstname).toLowerCase();
+      const username = this.username.toLowerCase();
       var isUserPublication = false;
       // we test both case where firstname is before or after last name
       publication.authors.forEach(function(author) {
         author = author.toLowerCase();
-        if (author === username || author === username_rev)
+        if (author == username)
           isUserPublication = true;
       });
       return (isUserPublication

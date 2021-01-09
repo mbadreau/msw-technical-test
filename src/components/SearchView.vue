@@ -42,6 +42,8 @@
 
 <script>
 import { users } from '../assets/users.js'
+import { user } from '../assets/user.js'
+import { eventBus } from '../main.js'
 
 export default {
   props: {
@@ -52,7 +54,7 @@ export default {
   },
   data() {
     return {
-      users,
+      user: null,
       name: '',
       selected: 0,
     }
@@ -73,10 +75,10 @@ export default {
       }
     },
     loadSelected: function() {
-      console.log(this.userId + ' - ' + this.selected)
+      // console.log(this.userId + ' - ' + this.selected)
       // userId 0 is the default value (no user)
       if (this.selected > 0 && this.selected != this.userId) {
-        this.$router.push({ name: 'viewMyResume', params: { userId: this.selected } });
+        this.$router.push({ params: { userId: this.selected } });
       }
       this.resetSelected();
     },
@@ -84,7 +86,7 @@ export default {
   computed: {
     filteredData() {
       // first filter users with given input string parts
-      return this.users.filter((option) => {
+      return users.filter((option) => {
         var isMatching = true;
         this.name.toLowerCase().split(' ').forEach(function(part) {
           isMatching &= (option.position.toString().toLowerCase().indexOf(part) >= 0
@@ -103,5 +105,21 @@ export default {
       });
     }
   },
+  watch: {
+    userId: function(userId) {
+      if (userId > 0 && userId <= users.length) {
+        // TODO load current user from DB here
+        this.user = user;
+        this.user.id = userId;
+        this.user.position = users[userId-1].position;
+        this.user.firstname = users[userId-1].firstname;
+        this.user.lastname = users[userId-1].lastname;
+      }
+      else {
+        this.user = null;
+      }
+      eventBus.$emit('userChange', this.user);
+    }
+  }
 }
 </script>
