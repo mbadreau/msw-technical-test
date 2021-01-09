@@ -1,16 +1,13 @@
 import MbaMainView from '../components/MainView.vue'
-import MbaMyResume from '../components/MyResume.vue'
 import MbaMyProfile from '../components/MyProfile.vue'
 import MbaMyPublications from '../components/MyPublications.vue'
+import MbaMyResume from '../components/MyResume.vue'
 import MbaPageNotFound from '../components/PageNotFound.vue'
+import MbaProfile from '../components/Profile.vue'
+import MbaSearchView from '../components/SearchView.vue'
 
 export const routes = [
-  // homepage
-  {
-    path: '',
-    name: 'viewRoot',
-    component: null,
-  },
+  /* REDIRECT */
   // redirect partial requests to homepage
   {
     path: '/user',
@@ -32,29 +29,50 @@ export const routes = [
       params: { userId: to.params.userId },
     }),
   },
+  /* ROUTES */
+  // homepage
+  {
+    path: '',
+    name: 'viewRoot',
+    components: {
+      default: null,
+      search: MbaSearchView,
+    },
+  },
   // when a user is specified in the url, display its profile if exists
   {
     path: '/user/:userId(\\d+)',
-    component: MbaMainView,
-    props: true,
+    components: {
+      default: MbaMainView,
+      search: MbaSearchView,
+    },
     children: [
       // default subpage
       {
         path: '',
         name: 'viewMyResume',
-        component: MbaMyResume,
+        components: {
+          default: MbaMyResume,
+          profile: MbaProfile,
+        },
       },
       // form subpage
       {
         path: 'profile',
         name: 'viewMyProfile',
-        component: MbaMyProfile,
+        components: {
+          default: MbaMyProfile,
+          profile: MbaProfile,
+        },
       },
       // publications subpage
       {
         path: 'publications',
         name: 'viewMyPublications',
-        component: MbaMyPublications,
+        components: {
+          default: MbaMyPublications,
+          profile: MbaProfile,
+        },
         // using props to get back search query value
         props: route => ({ search: route.query.search }),
       },

@@ -3,7 +3,7 @@
     <div class="tile is-3 is-parent">
       <div class="tile is-child">
 
-        <mba-profile></mba-profile>
+        <router-view name="profile"></router-view>
 
       </div>
     </div>
@@ -35,11 +35,7 @@
 </template>
 
 <script>
-import MbaProfile from './Profile.vue'
-
 export default {
-  components: {
-    MbaProfile,
-  },
+  
 }
 </script>
