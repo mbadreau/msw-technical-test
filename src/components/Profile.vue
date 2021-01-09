@@ -9,14 +9,19 @@
     </div>
     <div class="container">
       <div class="block">
-        <p class="is-size-5 has-text-weight-bold is-capitalized">{{ user.firstname }} {{ user.lastname }}</p>
-        <p class="is-size-6 has-text-weight-semibold">About me</p>
+        <p class="is-size-5 has-text-weight-bold is-capitalized">
+          {{ user.firstname }} {{ user.lastname }}</p>
+        <p class="is-size-6 has-text-weight-semibold"
+          v-if="((user||{}).about||[]).length">About me</p>
         <p class="is-size-6 has-text-weight-normal">{{ user.about }}</p>
       </div>
       <div class="block">
-        <p class="is-size-6 has-text-weight-semibold" v-if="((user||{}).socialIds||[]).length">My social ids</p>
+        <p class="is-size-6 has-text-weight-semibold"
+          v-if="((user||{}).socialIds||[]).length">My social ids</p>
         <ul>
-          <li class="is-size-6 has-text-weight-normal" v-for="media in user.socialIds" :key="getSocialMedia(media.name).id">
+          <li class="is-size-6 has-text-weight-normal"
+            v-for="media in user.socialIds"
+            :key="getSocialMedia(media.name).id">
             <a :href="media.link">
               <i :class="getSocialMedia(media.name).icon"
                 :style="{ color: getSocialMedia(media.name).color }"></i>

@@ -1,18 +1,18 @@
 <template>
   <div>
-    <form>
+    <form @submit.prevent>
       <!-- Profile part -->
       <div style="width: 40%;">
         <b-field label="Prénom">
-          <b-input v-model="form.firstname"></b-input>
+          <b-input v-model="form.firstname" @blur="saveFirstname"></b-input>
         </b-field>
 
         <b-field label="Nom">
-          <b-input v-model="form.lastname"></b-input>
+          <b-input v-model="form.lastname" @blur="saveLastname"></b-input>
         </b-field>
 
         <b-field label="About me">
-          <b-input type="textarea" v-model="form.about"></b-input>
+          <b-input type="textarea" v-model="form.about" @blur="saveAbout"></b-input>
         </b-field>
       </div>
 
@@ -56,12 +56,14 @@
       <br>
       <div style="width: 60%;">
         <b-field>
-          <b-button type="is-primary">Ajouter une affiliation</b-button>
+          <b-button type="is-primary" :disabled="!isAffiliationValid" 
+            @click="updateAffiliation">Ajouter une affiliation</b-button>
         </b-field>
 
         <b-field label="Organisation">
           <template slot="label">
-            Organisation<a style="float: right; text-decoration: underline;">X</a>
+            Organisation
+            <a style="float: right; text-decoration: underline;" @click="removeAffiliation">X</a>
           </template>
           <b-select expanded v-model="form.affiliation.organisation">
             <option
@@ -81,13 +83,15 @@
             <p class="control">
               <button class="button is-static">De</button>
             </p>
-            <b-input v-model.number="form.affiliation.fromDate" style="width: 70%;"></b-input>
+            <b-input v-model.number="form.affiliation.fromDate" style="width: 70%;"
+              @blur="form.affiliation.fromDate = checkedFromDate"></b-input>
           </b-field>
           <b-field position="is-right">
             <p class="control">
               <button class="button is-static">A</button>
             </p>
-            <b-input v-model.number="form.affiliation.toDate" style="width: 70%;"></b-input>
+            <b-input v-model.number="form.affiliation.toDate" style="width: 70%;"
+              @blur="form.affiliation.toDate = checkedToDate"></b-input>
           </b-field>
         </b-field>
         <!-- <b-button>De {{form.fromDate}}, à {{ form.toDate }}</b-button> -->
@@ -139,13 +143,8 @@ export default {
     this.form.about = ((this.user||{}).about||'');
     // if exists, take the first socialId of current user
     this.form.social.media = ((((this.user||{}).socialIds||[])[0]||{}).name||'');
-    this.form.social.link = ((((this.user||{}).socialIds||[])[0]||{}).link||'');
     // if exists, take the first affiliation of current user
     this.form.affiliation.organisation = ((((this.user||{}).affiliations||[])[0]||{}).organisation||'');
-    this.form.affiliation.team = ((((this.user||{}).affiliations||[])[0]||{}).team||'');
-    this.form.affiliation.fromDate = ((((this.user||{}).affiliations||[])[0]||{}).fromDate||'');
-    this.form.affiliation.toDate = ((((this.user||{}).affiliations||[])[0]||{}).toDate||'');
-    this.form.affiliation.country = ((((this.user||{}).affiliations||[])[0]||{}).country||'');
   },
   data() {
     return {
@@ -178,15 +177,157 @@ export default {
     // deleteDropFile(index) {
     //   this.dropFiles.splice(index, 1)
     // },
+    // FORM DATA SAVING FUNCTIONS
+    saveFirstname: function() {
+      console.log('saveFirstname(' + this.form.firstname + ')');
+      // input is valid if length > 0
+      if (this.form.firstname.length > 0 && (this.user||{}).firstname) {
+        this.user.firstname = this.form.firstname;
+      }
+    },
+    saveLastname: function() {
+      console.log('saveLastname(' + this.form.lastname + ')');
+      // input is valid if length > 0
+      if (this.form.lastname.length > 0 && (this.user||{}).lastname) {
+        this.user.lastname = this.form.lastname;
+      }
+    },
+    saveAbout: function() {
+      console.log('saveAbout(' + this.form.about.length + ')');
+      // input is valid if length >= 0
+      if (this.form.about.length >= 0 && (this.user||{}).about) {
+        this.user.about = this.form.about;
+      }
+    },
     // Add or update current social ID
     updateSocialId: function() {
       console.log('updateSocialId(' + this.form.social.media + ', ' + this.form.social.link + ')');
-      //TODO
+      // input is valid if link length > 0
+      if (this.form.social.media && this.form.social.link.length > 0) {
+        // replace link if social ID is already registered
+        var socialIds = ((this.user||{}).socialIds||[]);
+        for (var i = 0 ; i < socialIds.length ; i++) {
+          if (socialIds[i].name == this.form.social.media) {
+            socialIds[i].link = this.form.social.link;
+            return;
+          }
+        }
+        // else add social ID to user's data
+        // make new object reactive using Vue.set and Object.assign({}, ...)
+        this.$set(socialIds, socialIds.length, Object.assign({}, {
+            name: this.form.social.media,
+            link: this.form.social.link,
+          }));
+      }
+      else {
+        console.log('ERROR updateSocialId(): bad input');
+      }
     },
     // remove current social ID
     removeSocialId: function() {
       console.log('removeSocialId(' + this.form.social.media + ', ' + this.form.social.link + ')');
-      //TODO
+      // no need to validate input
+      var socialIds = ((this.user||{}).socialIds||[]);
+      for (var i = 0 ; i < socialIds.length ; i++) {
+        if (socialIds[i].name == this.form.social.media) {
+          socialIds.splice(i, 1);
+          this.form.social.link = '';
+          return;
+        }
+      }
+      console.log('ERROR removeSocialId(): media not found');
+    },
+    // Add or update current social ID
+    updateAffiliation: function() {
+      console.log('updateAffiliation(' + this.form.affiliation.organisation + ')');
+      // input is valid if computed isAffiliationValid returns true
+      if (this.form.social.media && this.isAffiliationValid) {
+        // replace affiliation data if organisation is already registered
+        var affiliations = ((this.user||{}).affiliations||[]);
+        for (var i = 0 ; i < affiliations.length ; i++) {
+          if (affiliations[i].organisation == this.form.affiliation.organisation) {
+            affiliations[i].team = this.form.affiliation.team;
+            affiliations[i].fromDate = this.form.affiliation.fromDate;
+            affiliations[i].toDate = this.form.affiliation.toDate;
+            affiliations[i].country = this.form.affiliation.country;
+            return;
+          }
+        }
+        // else add affiliation to user's data
+        // make new object reactive using Vue.set and Object.assign({}, ...)
+        this.$set(affiliations, affiliations.length, Object.assign({}, {
+            organisation: this.form.affiliation.organisation,
+            team: this.form.affiliation.team,
+            fromDate: this.form.affiliation.fromDate,
+            toDate: this.form.affiliation.toDate,
+            country: this.form.affiliation.country,
+          }));
+      }
+      else {
+        console.log('ERROR updateSocialId(): bad input');
+      }
+    },
+    // Add or update current social ID
+    removeAffiliation: function() {
+      console.log('removeAffiliation(' + this.form.affiliation.organisation + ')');
+      // no need to validate input
+      var affiliations = ((this.user||{}).affiliations||[]);
+      for (var i = 0 ; i < affiliations.length ; i++) {
+        if (affiliations[i].organisation == this.form.affiliation.organisation) {
+          affiliations.splice(i, 1);
+          this.form.affiliation.team = '';
+          this.form.affiliation.fromDate = '';
+          this.form.affiliation.toDate = '';
+          this.form.affiliation.country = '';
+          return;
+        }
+      }
+      console.log('ERROR removeAffiliation(): organisation not found');
+    },
+    saveAvatar: function() {
+      // input is valid if not null (image type is already filtered by drag n drop)
+      if (this.form.dropFile) {
+        alert('Saving \'' + this.form.dropFile.name + '\' in database...');
+      }
+    },
+    isValidDate: function(date) {
+      date = Number.parseInt(date, 10);
+      const thisYear = new Date().getFullYear();
+      const minYear = 100;
+      const maxYear = 1;
+      return (!Number.isNaN(date)
+        && date >= (thisYear - minYear)
+        && date <= (thisYear + maxYear));
+    },
+  },
+  computed: {
+    checkedFromDate: function() {
+      var fromDate = this.form.affiliation.fromDate;
+      var toDate = this.form.affiliation.toDate;
+      // if fromDate is valid
+      if (this.isValidDate(fromDate)) {
+        // and if toDate is not set, or valid but >= fromDate
+        if (!toDate || (this.isValidDate(toDate) && fromDate <= toDate)) {
+          return fromDate;
+        }
+      }
+      return '';
+    },
+    checkedToDate: function() {
+      var fromDate = this.form.affiliation.fromDate;
+      var toDate = this.form.affiliation.toDate;
+      // if toDate is valid
+      if (this.isValidDate(toDate)) {
+        // and if fromDate is not set, or valid but >= toDate
+        if (!fromDate || (this.isValidDate(fromDate) && fromDate <= toDate)) {
+          return toDate;
+        }
+      }
+      return '';
+    },
+    isAffiliationValid: function() {
+      return this.form.affiliation.organisation.length
+        && this.form.affiliation.country;
     },
   },
   watch: {
@@ -219,6 +360,10 @@ export default {
       this.form.affiliation.fromDate = '';
       this.form.affiliation.toDate = '';
       this.form.affiliation.country = '';
+    },
+    // called on avatar dropfile change
+    'form.dropFile': function() {
+      this.saveAvatar();
     },
   }
 }
