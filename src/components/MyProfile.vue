@@ -24,13 +24,11 @@
             placeholder="Social id - URL / username / id"
             v-model="form.social.link"
             style="width: 40%;"
-            :disabled="!form.social.media.name">
+            :disabled="!form.social.media">
           </b-input>
           <b-select v-model="form.social.media" @input="updateSocialIdLink">
-            <option v-for="(media, index) in formData.socialMedia"
-              :style="{ color: media.color }" :value="media" :key="index">
-              <!-- <i> markup does not work in <option>, may using <b-dropdown> instead -->
-              <i :class="media.icon"></i> {{ media.name }}
+            <option v-for="media in formData.socialMedia" :value="media.name" :key="media.id">
+              {{ media.name }}
             </option>
           </b-select>
           <b-button type="is-primary"
@@ -65,7 +63,7 @@
           <template slot="label">
             Organisation<a style="float: right; text-decoration: underline;">X</a>
           </template>
-          <b-select expanded v-model="form.organisation">
+          <b-select expanded v-model="form.affiliation.organisation">
             <option
               v-for="(organisation, index) in formData.organisations"
               :value="organisation" :key="index">
@@ -75,7 +73,7 @@
         </b-field>
 
         <b-field label="Equipe">
-          <b-input v-model="form.team"></b-input>
+          <b-input v-model="form.affiliation.team"></b-input>
         </b-field>
 
         <b-field label="Dates">
@@ -83,19 +81,19 @@
             <p class="control">
               <button class="button is-static">De</button>
             </p>
-            <b-input v-model.number="form.fromDate" style="width: 70%;"></b-input>
+            <b-input v-model.number="form.affiliation.fromDate" style="width: 70%;"></b-input>
           </b-field>
           <b-field position="is-right">
             <p class="control">
               <button class="button is-static">A</button>
             </p>
-            <b-input v-model.number="form.toDate" style="width: 70%;"></b-input>
+            <b-input v-model.number="form.affiliation.toDate" style="width: 70%;"></b-input>
           </b-field>
         </b-field>
         <!-- <b-button>De {{form.fromDate}}, à {{ form.toDate }}</b-button> -->
 
         <b-field label="Pays">
-          <b-select expanded v-model="form.country">
+          <b-select expanded v-model="form.affiliation.country">
             <option v-for="(country, index) in formData.countries" :value="country" :key="index">
               {{ country }}
             </option>
@@ -129,11 +127,26 @@
 
 <script>
 import { countries } from '../assets/countries.js'
-import { organisation } from '../assets/organisations.js'
+import { organisations } from '../assets/organisations.js'
 import { socialMedia } from '../assets/socialMedia.js'
 import { user } from '../assets/user.js'
 
 export default {
+  created: function() {
+    // init form with current user values
+    this.form.firstname =((this.user||{}).firstname||'');
+    this.form.lastname = ((this.user||{}).lastname||'');
+    this.form.about = ((this.user||{}).about||'');
+    // if exists, take the first socialId of current user
+    this.form.social.media = ((((this.user||{}).socialIds||[])[0]||{}).name||'');
+    this.form.social.link = ((((this.user||{}).socialIds||[])[0]||{}).link||'');
+    // if exists, take the first affiliation of current user
+    this.form.affiliation.organisation = ((((this.user||{}).affiliations||[])[0]||{}).organisation||'');
+    this.form.affiliation.team = ((((this.user||{}).affiliations||[])[0]||{}).team||'');
+    this.form.affiliation.fromDate = ((((this.user||{}).affiliations||[])[0]||{}).fromDate||'');
+    this.form.affiliation.toDate = ((((this.user||{}).affiliations||[])[0]||{}).toDate||'');
+    this.form.affiliation.country = ((((this.user||{}).affiliations||[])[0]||{}).country||'');
+  },
   data() {
     return {
       user,
@@ -142,23 +155,21 @@ export default {
         lastname: '',
         about: '',
         social: {
-            media: {
-              name: '',
-              icon: '',
-              color: '',
-            },
+            media: '',
             link: '',
         },
-        organisation: '',
-        team: '',
-        fromDate: '',
-        toDate: '',
-        country: '',
+        affiliation: {
+          organisation: '',
+          team: '',
+          fromDate: '',
+          toDate: '',
+          country: '',
+        },
         dropFile: null,
       },
       formData: {
         countries,
-        organisation,
+        organisations,
         socialMedia,
       },
     }
@@ -169,9 +180,9 @@ export default {
     // },
     // Update social ID link when selecting new social media
     updateSocialIdLink: function() {
-      if (this.form.social.media.name) {
+      if (this.form.social.media) {
         for (var i=0; i < this.user.socialIds.length; i++) {
-          if (this.user.socialIds[i].name == this.form.social.media.name) {
+          if (this.user.socialIds[i].name == this.form.social.media) {
             this.form.social.link = this.user.socialIds[i].link;
             return
           }
@@ -181,12 +192,12 @@ export default {
     },
     // Add or update current social ID
     updateSocialId: function() {
-      console.log('updateSocialId(' + this.form.social.media.name + ', ' + this.form.social.link + ')');
+      console.log('updateSocialId(' + this.form.social.media + ', ' + this.form.social.link + ')');
       //TODO
     },
     // remove current social ID
     removeSocialId: function() {
-      console.log('removeSocialId(' + this.form.social.media.name + ', ' + this.form.social.link + ')');
+      console.log('removeSocialId(' + this.form.social.media + ', ' + this.form.social.link + ')');
       //TODO
     },
   },
