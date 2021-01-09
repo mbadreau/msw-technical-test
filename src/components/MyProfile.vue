@@ -26,7 +26,7 @@
             style="width: 40%;"
             :disabled="!form.social.media">
           </b-input>
-          <b-select v-model="form.social.media" @input="updateSocialIdLink">
+          <b-select v-model="form.social.media">
             <option v-for="media in formData.socialMedia" :value="media.name" :key="media.id">
               {{ media.name }}
             </option>
@@ -178,18 +178,6 @@ export default {
     // deleteDropFile(index) {
     //   this.dropFiles.splice(index, 1)
     // },
-    // Update social ID link when selecting new social media
-    updateSocialIdLink: function() {
-      if (this.form.social.media) {
-        for (var i=0; i < this.user.socialIds.length; i++) {
-          if (this.user.socialIds[i].name == this.form.social.media) {
-            this.form.social.link = this.user.socialIds[i].link;
-            return
-          }
-        }
-      }
-      this.form.social.link = '';
-    },
     // Add or update current social ID
     updateSocialId: function() {
       console.log('updateSocialId(' + this.form.social.media + ', ' + this.form.social.link + ')');
@@ -201,5 +189,37 @@ export default {
       //TODO
     },
   },
+  watch: {
+    // called on social media dropdown change
+    'form.social.media': function() {
+      if (this.form.social.media) {
+        for (var i = 0 ; i < this.user.socialIds.length ; i++) {
+          if (this.user.socialIds[i].name == this.form.social.media) {
+            this.form.social.link = this.user.socialIds[i].link;
+            return;
+          }
+        }
+      }
+      this.form.social.link = '';
+    },
+    // called on affiliation organisation dropdown change
+    'form.affiliation.organisation': function() {
+      if (this.form.affiliation.organisation) {
+        for (var i = 0 ; i < this.user.affiliations.length ; i++) {
+          if (this.user.affiliations[i].organisation == this.form.affiliation.organisation) {
+            this.form.affiliation.team = this.user.affiliations[i].team;
+            this.form.affiliation.fromDate = this.user.affiliations[i].fromDate;
+            this.form.affiliation.toDate = this.user.affiliations[i].toDate;
+            this.form.affiliation.country = this.user.affiliations[i].country;
+            return;
+          }
+        }
+      }
+      this.form.affiliation.team = '';
+      this.form.affiliation.fromDate = '';
+      this.form.affiliation.toDate = '';
+      this.form.affiliation.country = '';
+    },
+  }
 }
 </script>
