@@ -30,3 +30,12 @@ export const socialMedia = [
     color: '#ff7700',
   },
 ]
+
+export const getSocialMedia = function(name) {
+  for (const media of socialMedia) {
+    if (media.name && media.name == name) {
+      return media;
+    }
+  }
+  return {};
+}

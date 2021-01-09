@@ -14,11 +14,13 @@
         <p class="is-size-6 has-text-weight-normal">{{ user.about }}</p>
       </div>
       <div class="block">
-        <p class="is-size-6 has-text-weight-semibold">My social ids</p>
+        <p class="is-size-6 has-text-weight-semibold" v-if="((user||{}).socialIds||[]).length">My social ids</p>
         <ul>
-          <li class="is-size-6 has-text-weight-normal" v-for="media in user.socialIds" :key="media.id">
+          <li class="is-size-6 has-text-weight-normal" v-for="media in user.socialIds" :key="getSocialMedia(media.name).id">
             <a :href="media.link">
-              <i :class="media.icon" :style="{ color: media.color }"></i> {{ media.name }}
+              <i :class="getSocialMedia(media.name).icon"
+                :style="{ color: getSocialMedia(media.name).color }"></i>
+                {{ media.name }}
             </a>
           </li>
         </ul>
@@ -28,13 +30,18 @@
 </template>
 
 <script>
+import { socialMedia, getSocialMedia } from '../assets/socialMedia.js'
 import { user } from '../assets/user.js'
 
 export default {
   data() {
     return {
       user,
+      socialMedia,
     }
+  },
+  methods: {
+    getSocialMedia,
   }
 }
 </script>
