@@ -90,6 +90,14 @@ export default {
             )
       );
     },
+    sortByDate: function(publication_1, publication_2) {
+      const date1 = Number.parseInt(publication_1.year, 10);
+      const date2 = Number.parseInt(publication_2.year, 10);
+      if (!Number.isNaN(date1) && !Number.isNaN(date2)) {
+        return date2 - date1;
+      }
+      return 0;
+    },
   },
   filters: {
     formatList: function(value) {
@@ -113,10 +121,12 @@ export default {
     filteredByUsername() {
       return this.publications.filter(option => 
         this.filterPublication(this.name, option))
+        .sort(this.sortByDate);
     },
     filteredBySelected() {
       return this.publications.filter(option => 
         this.filterPublication(this.selected, option))
+        .sort(this.sortByDate);
     },
   },
 }
