@@ -44,7 +44,7 @@
         </b-field>
 
         <!-- <ul class="container">
-          <li v-for="media in user.socialIds" :key="media.id">
+          <li v-for="media in ((user||{}).socialIds||[])" :key="media.id">
             <p><i :class="media.icon" :style="{ color: media.color }"></i>
             {{ media.name }} : {{ media.link }}</p>
           </li>
@@ -133,22 +133,19 @@
 import { countries } from '../assets/countries.js'
 import { organisations } from '../assets/organisations.js'
 import { socialMedia } from '../assets/socialMedia.js'
-import { user } from '../assets/user.js'
 
 export default {
   created: function() {
-    // init form with current user values
-    this.form.firstname =((this.user||{}).firstname||'');
-    this.form.lastname = ((this.user||{}).lastname||'');
-    this.form.about = ((this.user||{}).about||'');
-    // if exists, take the first socialId of current user
-    this.form.social.media = ((((this.user||{}).socialIds||[])[0]||{}).name||'');
-    // if exists, take the first affiliation of current user
-    this.form.affiliation.organisation = ((((this.user||{}).affiliations||[])[0]||{}).organisation||'');
+    this.resetForm();
+  },
+  props: {
+    user: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
-      user,
       form: {
         firstname: '',
         lastname: '',
@@ -177,6 +174,16 @@ export default {
     // deleteDropFile(index) {
     //   this.dropFiles.splice(index, 1)
     // },
+    resetForm: function() {
+        // init form with current user values or default ones (on userId change)
+        this.form.firstname =((this.user||{}).firstname||'');
+        this.form.lastname = ((this.user||{}).lastname||'');
+        this.form.about = ((this.user||{}).about||'');
+        // if exists, take the first socialId of current user
+        this.form.social.media = ((((this.user||{}).socialIds||[])[0]||{}).name||'');
+        // if exists, take the first affiliation of current user
+        this.form.affiliation.organisation = ((((this.user||{}).affiliations||[])[0]||{}).organisation||'');
+    },
     // FORM DATA SAVING FUNCTIONS
     saveFirstname: function() {
       console.log('saveFirstname(' + this.form.firstname + ')');
@@ -331,10 +338,13 @@ export default {
     },
   },
   watch: {
+    'user.id': function() {
+      this.resetForm();
+    },
     // called on social media dropdown change
     'form.social.media': function() {
       if (this.form.social.media) {
-        for (var i = 0 ; i < this.user.socialIds.length ; i++) {
+        for (var i = 0 ; i < ((this.user||{}).socialIds||[]).length ; i++) {
           if (this.user.socialIds[i].name == this.form.social.media) {
             this.form.social.link = this.user.socialIds[i].link;
             return;
@@ -346,7 +356,7 @@ export default {
     // called on affiliation organisation dropdown change
     'form.affiliation.organisation': function() {
       if (this.form.affiliation.organisation) {
-        for (var i = 0 ; i < this.user.affiliations.length ; i++) {
+        for (var i = 0 ; i < ((this.user||{}).affiliations||[]).length ; i++) {
           if (this.user.affiliations[i].organisation == this.form.affiliation.organisation) {
             this.form.affiliation.team = this.user.affiliations[i].team;
             this.form.affiliation.fromDate = this.user.affiliations[i].fromDate;

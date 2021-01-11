@@ -41,23 +41,31 @@
 </template>
 
 <script>
-import { users } from '../assets/users.js'
-
 export default {
+  created: function() {
+    this.emitUserIdChange();
+  },
   props: {
+    users: {
+      type: Array,
+      default: null,
+    },
     userId: {
       type: Number,
       default: 0,
-    }
+    },
   },
   data() {
     return {
-      users,
       name: '',
       selected: 0,
     }
   },
   methods: {
+    emitUserIdChange: function() {
+      // console.log('emitUserIdChange('+this.userId+')');
+      this.$emit('userIdChange', { userId: this.userId });
+    },
     resetSelected: function() {
       this.name = '';
       this.selected = 0;
@@ -90,7 +98,7 @@ export default {
   computed: {
     filteredData() {
       // first filter users with given input string parts
-      return this.users.filter((option) => {
+      return (this.users||[]).filter((option) => {
         var isMatching = true;
         this.name.toLowerCase().split(' ').forEach(function(part) {
           isMatching &= (option.position.toString().toLowerCase().indexOf(part) >= 0
@@ -107,6 +115,11 @@ export default {
             + user.firstname + ' ' + user.lastname)
         }
       });
+    }
+  },
+  watch: {
+    userId: function() {
+      this.emitUserIdChange();
     }
   },
 }

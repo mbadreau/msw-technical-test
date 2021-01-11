@@ -3,7 +3,7 @@
     <div class="tile is-3 is-parent">
       <div class="tile is-child">
 
-        <router-view name="profile"></router-view>
+        <router-view name="profile" :user="user"></router-view>
 
       </div>
     </div>
@@ -26,7 +26,7 @@
         </div>
 
         <div class="section">
-          <router-view></router-view>
+          <router-view :user="user"></router-view>
         </div>
         
       </div>
@@ -36,6 +36,11 @@
 
 <script>
 export default {
-  
+  props: {
+    user: {
+      type: Object,
+      default: null,
+    },
+  },
 }
 </script>

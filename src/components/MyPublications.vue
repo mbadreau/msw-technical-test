@@ -12,7 +12,7 @@
           clearable
           v-model="name"
           placeholder="Rechercher dans les publications"
-          :data="filteredData"
+          :data="filteredByUsername"
           field="title">
           <template slot="empty">
             Aucune publication trouvée
@@ -26,7 +26,7 @@
     </div>
 
     <ul>
-      <li class="block" v-for="publication in filteredSelectedData" :key="publication.id">
+      <li class="block" v-for="publication in filteredBySelected" :key="publication.id">
         <p>{{ publication.authors | formatList }}. {{ publication.year }}. {{ publication.title }}.</p>
       </li>
     </ul>
@@ -36,7 +36,6 @@
 
 <script>
 import { publications } from '../assets/publications.js'
-import { user } from '../assets/user.js'
 
 export default {
   created: function() {
@@ -55,15 +54,18 @@ export default {
     });
   },
   props: {
+    user: {
+      type: Object,
+      default: null,
+    },
     search: {
       type: String,
       default: '',
-    }
+    },
   },
   data() {
     return {
       publications,
-      user,
       name: '',
       selected: '',
     }
@@ -71,14 +73,13 @@ export default {
   methods: {
     filterPublication: function(name, publication) {
       // TODO hope I'll improve this with elastic
-      name = name.toLowerCase();
-      const username = (user.firstname + ' ' + user.lastname).toLowerCase();
-      const username_rev = (user.lastname + ' ' + user.firstname).toLowerCase();
+      name = (name||'').toLowerCase();
+      const username = this.username.toLowerCase();
       var isUserPublication = false;
       // we test both case where firstname is before or after last name
       publication.authors.forEach(function(author) {
         author = author.toLowerCase();
-        if (author === username || author === username_rev)
+        if (author === username)
           isUserPublication = true;
       });
       return (isUserPublication
@@ -88,7 +89,7 @@ export default {
               || publication.language.toString().toLowerCase().indexOf(name) >= 0
             )
       );
-    }
+    },
   },
   filters: {
     formatList: function(value) {
@@ -102,11 +103,18 @@ export default {
     },
   },
   computed: {
-    filteredData() {
+    username: function() {
+      if (((this.user||{}).firstname||'').length > 0 
+        && ((this.user||{}).lastname||'').length > 0) {
+        return this.user.firstname + ' ' + this.user.lastname;
+      }
+      return '';
+    },
+    filteredByUsername() {
       return this.publications.filter(option => 
         this.filterPublication(this.name, option))
     },
-    filteredSelectedData() {
+    filteredBySelected() {
       return this.publications.filter(option => 
         this.filterPublication(this.selected, option))
     },

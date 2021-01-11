@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="container">
-      <li class="block" v-for="affiliation in user.affiliations" :key="affiliation.id">
+      <li class="block" v-for="affiliation in ((user||{}).affiliations||[])" :key="affiliation.id">
         <p class="is-size-5 has-text-weight-bold">{{ affiliation.organisation }}</p>
         <p class="is-size-6 has-text-weight-semibold">{{ affiliation.position }}</p>
         <p class="is-size-6 has-text-weight-normal">{{ affiliation.team }}</p>
@@ -13,13 +13,12 @@
 </template>
 
 <script>
-import { user } from '../assets/user.js'
-
 export default {
-  data() {
-    return {
-      user,
-    }
+  props: {
+    user: {
+      type: Object,
+      default: null,
+    },
   },
   methods: {
     formatDates: function(from, to) {
