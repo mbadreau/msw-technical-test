@@ -22,12 +22,12 @@ export const user = {
   affiliations: [
     {
       id: 1,
-      organisation: 'TurboSound UK',
-      position: 'Ingénieur du son',
-      team: 'Equipe de recherche armes à ultrasons',
-      fromDate: '1956',
+      organisation: 'Marine Nationale',
+      position: 'Ingénieur naval',
+      team: 'Equipe de recherche camouflage sous-marin biplace',
+      fromDate: '',
       toDate: '',
-      country: 'Bordurie',
+      country: 'Belgique',
     },
     {
       id: 2,
@@ -40,12 +40,12 @@ export const user = {
     },
     {
       id: 3,
-      organisation: 'Marine Nationale',
-      position: 'Ingénieur naval',
-      team: 'Equipe de recherche camouflage sous-marin biplace',
-      fromDate: '',
-      toDate: '',
-      country: 'Belgique',
+      organisation: 'TurboSound UK',
+      position: 'Ingénieur du son',
+      team: 'Equipe de recherche armes à ultrasons',
+      fromDate: '1956',
+      toDate: '2020',
+      country: 'Bordurie',
     },
   ]
 }

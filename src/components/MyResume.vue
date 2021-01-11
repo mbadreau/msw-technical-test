@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="container">
-      <li class="block" v-for="affiliation in ((user||{}).affiliations||[])" :key="affiliation.id">
+      <li class="block" v-for="affiliation in sortedAffiliations" :key="affiliation.id">
         <p class="is-size-5 has-text-weight-bold">{{ affiliation.organisation }}</p>
         <p class="is-size-6 has-text-weight-semibold">{{ affiliation.position }}</p>
         <p class="is-size-6 has-text-weight-normal">{{ affiliation.team }}</p>
@@ -33,7 +33,30 @@ export default {
         dates = 'Jusqu\'en ' + to;
       }
       return dates;
+    },
+    sortByFromDate: function(affiliation_1, affiliation_2) {
+      const date1 = Number.parseInt(affiliation_1.fromDate, 10);
+      const date2 = Number.parseInt(affiliation_2.fromDate, 10);
+      if (!Number.isNaN(date1) && !Number.isNaN(date2)) {
+        return date2 - date1;
+      }
+      return 0;
+    },
+    sortByToDate: function(affiliation_1, affiliation_2) {
+      const date1 = Number.parseInt(affiliation_1.toDate, 10);
+      const date2 = Number.parseInt(affiliation_2.toDate, 10);
+      if (!Number.isNaN(date1) && !Number.isNaN(date2)) {
+        return date2 - date1;
+      }
+      return 0;
+    },
+  },
+  computed: {
+    sortedAffiliations: function() {
+      return ((this.user||{}).affiliations||[])
+        .sort(this.sortByToDate)
+        .sort(this.sortByFromDate);
     }
-  }
+  },
 }
 </script>
