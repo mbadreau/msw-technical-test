@@ -25,7 +25,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
 # TODO MBA
-- Install fontawesome-vue and load only used fa icons
 - Setup ElasticSearch backend
 - DB Init with default data
 - Define Rest API

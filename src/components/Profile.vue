@@ -23,8 +23,9 @@
             v-for="media in ((user||{}).socialIds||[])"
             :key="getSocialMedia(media.name).id">
             <a :href="media.link">
-              <i :class="getSocialMedia(media.name).icon"
-                :style="{ color: getSocialMedia(media.name).color }"></i>
+              <font-awesome-icon 
+                :icon="['fab', getSocialMedia(media.name).icon]" 
+                :style="{ color: getSocialMedia(media.name).color }"/>
                 {{ media.name }}
             </a>
           </li>

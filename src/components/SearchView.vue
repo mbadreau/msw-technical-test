@@ -23,7 +23,7 @@
         <b-button
         class="button is-primary"
         @click="toggleDropdown">
-          <i class="fas fa-caret-down"></i>
+          <font-awesome-icon :icon="['fas', 'caret-down']" />
         </b-button>
       </p>
     </b-field>

@@ -42,13 +42,6 @@
             -
           </b-button>
         </b-field>
-
-        <!-- <ul class="container">
-          <li v-for="media in ((user||{}).socialIds||[])" :key="media.id">
-            <p><i :class="media.icon" :style="{ color: media.color }"></i>
-            {{ media.name }} : {{ media.link }}</p>
-          </li>
-        </ul> -->
       </div>
       <br>
 

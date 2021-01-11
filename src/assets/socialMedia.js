@@ -2,31 +2,31 @@ export const socialMedia = [
   {
     id: 1,
     name: 'Facebook',
-    icon: 'fab fa-facebook',
+    icon: 'facebook',
     color: '#3b5998',
   },
   {
     id: 2,
     name: 'Twitter',
-    icon: 'fab fa-twitter',
+    icon: 'twitter',
     color: '#00acee',
   },
   {
     id: 3,
     name: 'Linkedin',
-    icon: 'fab fa-linkedin',
+    icon: 'linkedin',
     color: '#0072b1',
   },
   {
     id: 4,
     name: 'Orcid',
-    icon: 'fab fa-orcid',
+    icon: 'orcid',
     color: '#bdeb34',
   },
   {
     id: 5,
     name: 'SoundClound',
-    icon: 'fab fa-soundcloud',
+    icon: 'soundcloud',
     color: '#ff7700',
   },
 ]

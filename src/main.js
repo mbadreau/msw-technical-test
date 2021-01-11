@@ -2,24 +2,25 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
-import '@fortawesome/fontawesome-free/js/all.js';
 import App from './App.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { faFacebook, faLinkedin, faOrcid, faSoundcloud, faTwitter } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { routes } from './assets/routes.js'
 
+library.add(faCaretDown, faFacebook, faLinkedin, faOrcid, faSoundcloud, faTwitter)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueRouter)
-Vue.use(Buefy, {
-    defaultIconPack: 'fas',
-    defaultContainerElement: '#content',
-})
+Vue.use(Buefy)
 
 Vue.config.productionTip = false
 
-const router = new VueRouter({
-  routes: routes,
-  mode: 'history',
-})
-
 new Vue({
   render: h => h(App),
-  router: router,
+  router: new VueRouter({
+    routes: routes,
+    mode: 'history',
+  }),
 }).$mount('#app')
