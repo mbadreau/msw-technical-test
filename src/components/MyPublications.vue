@@ -46,7 +46,7 @@ export default {
     // auto update url query parameter on selected change
     this.$watch('selected', (value) => {
       // Use an empty catch to solve Avoided redundant navigation to current location error
-      this.$router.push({ name: 'viewMyPublications', query: { search: value } }).catch(()=>{});
+      this.$router.push({ query: { search: value } }).catch(()=>{});
     });
     // auto update selected on url query parameter change
     this.$watch('$route.query.search', (newValue) => {

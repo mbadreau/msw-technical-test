@@ -73,10 +73,16 @@ export default {
       }
     },
     loadSelected: function() {
-      console.log(this.userId + ' - ' + this.selected)
+      console.log(this.userId + ' -> ' + this.selected)
       // userId 0 is the default value (no user)
       if (this.selected > 0 && this.selected != this.userId) {
-        this.$router.push({ name: 'viewMyResume', params: { userId: this.selected } });
+        var routeObj = { params: { userId: this.selected } }
+        // add route name only is view is not fully loaded yet
+        if (!this.userId) {
+          routeObj.name = 'viewMyResume'
+        }
+        // Use an empty catch to solve Avoided redundant navigation to current location error
+        this.$router.push(routeObj).catch(()=>{});
       }
       this.resetSelected();
     },
